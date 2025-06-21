@@ -2,8 +2,8 @@ const mongoose = require('mongoose')
 
 // Define MongoDB URL
 
-// const mongoURL = 'mongodb://127.0.0.1:27017/resto'
-const mongoURL = 'mongodb+srv://pkshejwal009:NaVf7iZFDobxjS2t@cluster0.csm9jhl.mongodb.net/'
+// const mongoURL = process.env.MONGODB_URL_LOCAL
+const mongoURL = process.env.MONGODB_URL
 
 //set up db connection
 mongoose.connect(mongoURL,{
