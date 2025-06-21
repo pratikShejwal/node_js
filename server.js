@@ -39,4 +39,4 @@ app.use('/person',personRoutes)
 const menuRoutes = require('./routes/menuRoutes')
 app.use('/menu',menuRoutes)
 
-app.listen(3000)
+app.listen(PORT)
