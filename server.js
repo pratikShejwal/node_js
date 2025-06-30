@@ -26,12 +26,58 @@ require('dotenv').config()
 const PORT = process.env.PORT || 3000
 const app = express()
 const bodyParser = require('body-parser')
+const Person = require('./models/Person')
+const passport = require('passport')
+const LocalStrategy = require('passport-local').Strategy 
+
+
 
 app.use(bodyParser.json())
-app.get('/', (req, res) => {
+
+//Authentication logic here
+
+passport.use(new LocalStrategy(async(USER,PASS,done)=>{
+
+  try {
+    console.log(`received credentials ${USER} and ${PASS}`);
+  const user =await Person.findOne({username:USER})
+
+  if(!user)
+    {
+    return done(null,false,{message :"username not found"})
+  }
+
+  const isMatchPassword = user.password === password ? true : false
+  if(isMatchPassword)
+  {
+    return done(null,user)
+  }
+  else
+  {
+     return done(null,false,{message :"Wrong Password"})
+  }
+
+  }
+   catch (error) 
+   {
+    return done(err)
+  }
+  
+  
+
+  
+}))
+app.use(passport.initialize())
+//middleware function
+const logRequest = (req,res,next)=>{
+  console.log(`${new Date().toLocaleString()} request made to: ${req.originalUrl}` );
+  next()
+}
+app.use(logRequest)
+
+app.get('/',passport.authenticate('local',{session:false}),(req, res) => {
   res.send('Hello World')
 })
-
 
 const personRoutes = require('./routes/personRoutes')
 app.use('/person',personRoutes)
