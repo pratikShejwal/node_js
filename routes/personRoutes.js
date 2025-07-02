@@ -54,14 +54,12 @@ try {
 })
 
 router.get('/',jwtAuthMiddleware,async (req,res)=>{
-
   try {
     const data =await Person.find()
     res.status(200).json(data)
   } catch (err) {
     console.log("error");
-    res.send(500).json({error:'server side problem'})
-    
+    res.send(500).json({error:'server side problem'}) 
   }
 })
 
@@ -72,11 +70,9 @@ router.get('/profile',jwtAuthMiddleware,async (req,res)=> {
     const userId = userData.id
     const user =await Person.findById(userId)
     res.status(200).json({user})
-
   } catch (error) {
     res.status(500).json({message:"Internal Server Error"})
   }
-
 })
 
 //parameterized query
