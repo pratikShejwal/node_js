@@ -1,15 +1,26 @@
 const express = require('express')
 const router  = express.Router()
 const Person = require('./../models/Person')
+const {jwtAuthMiddleware,generateToken} = require('./../jwt')
+const { json } = require('body-parser')
 
-router.post('/',async(req,res)=>{
+router.post('/signup',async(req,res)=>{
 
 try {
    const data = req.body //bodyParser stores data on request body
   const newPerson = new Person(data)
 
   const response = await newPerson.save()
-  res.status(200).json(response)
+
+  const payload = {
+    id:resonse.id,
+    name:response.username
+  }
+  console.log(JSON.stringify(payload));
+  
+  const token = generateToken(payload)
+
+  res.status(200).json({response:response,token:token})
 } catch (err) {
   res.status(500).json({error:'internal error'})
 }
