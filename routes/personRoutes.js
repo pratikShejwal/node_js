@@ -26,7 +26,34 @@ try {
 }
 })
 
-router.get('/',async (req,res)=>{
+//login route
+router.post('/login',async(req,res)=>{
+  
+try {
+  const {username,password} = req.body
+  const user =await Person.findOne({username:username})
+
+  if(!user || !(await user.comparePassword(password))){
+    return res.status(401).json({message:'invalid username or password'})
+  }
+
+  //generate token
+    const payload = {
+      id:user.id,
+      username:user.usernam
+    }
+   const token = generateToken(payload)
+    
+   //return token as response
+   res.json(token)
+
+} catch (error) {
+  res.status(500).json({message:"server side error"})
+}
+
+})
+
+router.get('/',jwtAuthMiddleware,async (req,res)=>{
 
   try {
     const data =await Person.find()
@@ -38,6 +65,19 @@ router.get('/',async (req,res)=>{
   }
 })
 
+router.get('/profile',jwtAuthMiddleware,async (req,res)=> {
+  try {
+    const userData = req.user
+    console.log("userData: ",userData);
+    const userId = userData.id
+    const user =await Person.findById(userId)
+    res.status(200).json({user})
+
+  } catch (error) {
+    res.status(500).json({message:"Internal Server Error"})
+  }
+
+})
 
 //parameterized query
 
